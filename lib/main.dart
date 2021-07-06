@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'newsBrain.dart';
+import 'detailPage.dart';
 
 void main() {
   runApp(NewsApp());
@@ -12,7 +13,7 @@ class NewsApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.grey,
       ),
       home: MyHomePage(),
     );
@@ -57,80 +58,103 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('NewsApp'),
-      ),
-      body: Container(
-        child: Card(
-          child: FutureBuilder(
-            future: addToListFinal(),
-            builder: (context, snapshot) {
-              if (snapshot.data != null) {
-                return ListView.builder(
-                    controller: controller,
-                    itemCount: (snapshot.data! as List).length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                          title: Text((snapshot.data! as List)[index][0]),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                '${(snapshot.data! as List)[index][2] ?? 'https://weakwifisolutions.com/wp-content/uploads/2019/08/error-red-cross-7.png?ezimgfmt=ng%3Awebp%2Fngcb2%2Frs%3Adevice%2Frscb2-1'}'),
-                          ),
-                          subtitle:
-                              Text('${(snapshot.data! as List)[index][1]}'),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ContentPage(
-                                      (snapshot.data! as List)[index])),
-                            );
-                          });
-                    });
-              } else {
-                return Container(
-                  child: Center(
-                    child: Text('Loading'),
-                  ),
-                );
-              }
-            },
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 0,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('App'),
+          bottom: TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.home),
+              ),
+              Tab(
+                icon: Icon(Icons.favorite),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ContentPage extends StatelessWidget {
-  final List individualContent;
-  ContentPage(this.individualContent);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(individualContent[0]),
-      ),
-      body: Container(
-        child: Column(
+        body: TabBarView(
           children: [
             Container(
-              child: Image(
-                image: NetworkImage(individualContent[2] ??
-                    'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
-                fit: BoxFit.fill,
+              child: Card(
+                child: FutureBuilder(
+                  future: addToListFinal(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data != null) {
+                      return ListView.builder(
+                          controller: controller,
+                          itemCount: (snapshot.data! as List).length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white38,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade600
+                                            .withOpacity(0.5),
+                                        spreadRadius: 7,
+                                        blurRadius: 5,
+                                        offset: Offset(
+                                            0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 20),
+                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        (snapshot.data! as List)[index][0],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      ),
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+                                      ClipRRect(
+                                        child: Image.network((snapshot.data!
+                                                as List)[index][2] ??
+                                            'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                      ),
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+                                      Text(
+                                        (snapshot.data! as List)[index][1],
+                                        style: TextStyle(color: Colors.black54),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ContentPage(
+                                            (snapshot.data! as List)[index])),
+                                  );
+                                });
+                          });
+                    } else {
+                      return Container(
+                        child: Center(
+                          child: Text('Loading'),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              individualContent[1],
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
+            Container(),
           ],
         ),
       ),
