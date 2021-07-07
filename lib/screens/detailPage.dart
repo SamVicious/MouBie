@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:news_list/control/dataBaseHelper.dart';
 
 class ContentPage extends StatefulWidget {
-  final List individualContent;
+  final Map<String, dynamic> individualContent;
   ContentPage(this.individualContent);
 
   @override
@@ -15,13 +16,13 @@ class _ContentPageState extends State<ContentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.individualContent[0]),
+        title: Text(widget.individualContent['title']),
       ),
       body: Container(
         child: Column(
           children: [
             Image(
-              image: NetworkImage(widget.individualContent[2] ??
+              image: NetworkImage(widget.individualContent['urlToImage'] ??
                   'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
               fit: BoxFit.fill,
             ),
@@ -29,7 +30,7 @@ class _ContentPageState extends State<ContentPage> {
               height: 20.0,
             ),
             Text(
-              widget.individualContent[1],
+              widget.individualContent['description'],
               style: TextStyle(
                 fontSize: 20.0,
               ),
@@ -43,7 +44,12 @@ class _ContentPageState extends State<ContentPage> {
           color: isPressed ? Colors.red[300] : Colors.white,
         ),
         backgroundColor: Colors.grey,
-        onPressed: () => setState(() => isPressed = !isPressed),
+        onPressed: () => setState(() async {
+          isPressed = !isPressed;
+          await DatabaseHelper.instance.insert({
+            DatabaseHelper.columnName: widget.individualContent['title']
+          }); // Adds title to database
+        }),
       ),
     );
   }

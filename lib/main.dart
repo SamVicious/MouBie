@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'newsBrain.dart';
-import 'detailPage.dart';
+import 'package:news_list/control/dataBaseHelper.dart';
+import 'control/apiFetch.dart';
+import 'screens/detailPage.dart';
 
 void main() {
   runApp(NewsApp());
@@ -11,7 +12,7 @@ class NewsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter News App',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
@@ -30,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int i = 1;
   List<List> finalList = [];
   Future addToListFinal() async {
-    List<List> newsContent = await Data().addToList(number: i);
+    List<dynamic> newsContent = await Content().getRawData(pageNum: i);
     return newsContent;
   }
 
@@ -98,8 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             .withOpacity(0.5),
                                         spreadRadius: 7,
                                         blurRadius: 5,
-                                        offset: Offset(
-                                            0, 3), // changes position of shadow
+                                        offset: Offset(0, 3),
                                       ),
                                     ],
                                     borderRadius: BorderRadius.circular(20.0),
@@ -109,26 +109,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        (snapshot.data! as List)[index][0],
+                                        (snapshot.data! as List)[index]
+                                            ['title'],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20.0),
                                       ),
                                       SizedBox(
-                                        height: 20.0,
+                                        height: 10.0,
                                       ),
                                       ClipRRect(
                                         child: Image.network((snapshot.data!
-                                                as List)[index][2] ??
+                                                as List)[index]['urlToImage'] ??
                                             'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
                                         borderRadius:
                                             BorderRadius.circular(15.0),
                                       ),
                                       SizedBox(
-                                        height: 20.0,
+                                        height: 10.0,
                                       ),
                                       Text(
-                                        (snapshot.data! as List)[index][1],
+                                        (snapshot.data! as List)[index]
+                                            ['description'],
                                         style: TextStyle(color: Colors.black54),
                                       )
                                     ],
@@ -138,15 +140,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ContentPage(
-                                            (snapshot.data! as List)[index])),
+                                      builder: (context) => ContentPage(
+                                          (snapshot.data! as List)[index]),
+                                    ),
                                   );
                                 });
                           });
                     } else {
                       return Container(
                         child: Center(
-                          child: Text('Loading'),
+                          child: Text('Loading...'),
                         ),
                       );
                     }
@@ -154,7 +157,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(),
+            Container(
+              child: TextButton(
+                child: Text('Press me!'),
+                onPressed: () async {
+                  List<Map<String, dynamic>> items = await DatabaseHelper
+                      .instance
+                      .queryAll(); // prints whats's in the database
+                  print(items);
+                },
+              ),
+            ),
           ],
         ),
       ),
