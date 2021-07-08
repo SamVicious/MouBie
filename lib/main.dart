@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:news_list/control/dataBaseHelper.dart';
+import 'screens/localScreen.dart';
 import 'control/apiFetch.dart';
 import 'screens/detailPage.dart';
 
@@ -22,6 +22,7 @@ class NewsApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -29,7 +30,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final controller = ScrollController();
   int i = 1;
-  List<List> finalList = [];
   Future addToListFinal() async {
     List<dynamic> newsContent = await Content().getRawData(pageNum: i);
     return newsContent;
@@ -157,17 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(
-              child: TextButton(
-                child: Text('Press me!'),
-                onPressed: () async {
-                  List<Map<String, dynamic>> items = await DatabaseHelper
-                      .instance
-                      .queryAll(); // prints whats's in the database
-                  print(items);
-                },
-              ),
-            ),
+            LocalData(),
           ],
         ),
       ),

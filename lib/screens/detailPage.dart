@@ -39,17 +39,31 @@ class _ContentPageState extends State<ContentPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if (widget.individualContent['_id'] == null) {
+            await DatabaseHelper.instance.insert({
+              DatabaseHelper.title: widget.individualContent['title'],
+              DatabaseHelper.description:
+                  widget.individualContent['description'],
+              DatabaseHelper.imageURL: widget.individualContent['urlToImage'] ??
+                  'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg',
+              DatabaseHelper.state: 1,
+            });
+          } else {
+            await DatabaseHelper.instance
+                .delete(widget.individualContent['_id']);
+          }
+          setState(() {
+            isPressed = !isPressed;
+          });
+        },
         child: Icon(
           Icons.favorite,
-          color: isPressed ? Colors.red[300] : Colors.white,
+          color: !isPressed || widget.individualContent['state'] == 1
+              ? Colors.red[400]
+              : Colors.white,
         ),
         backgroundColor: Colors.grey,
-        onPressed: () => setState(() async {
-          isPressed = !isPressed;
-          await DatabaseHelper.instance.insert({
-            DatabaseHelper.columnName: widget.individualContent['title']
-          }); // Adds title to database
-        }),
       ),
     );
   }

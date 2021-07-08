@@ -8,7 +8,10 @@ class DatabaseHelper {
   static final _dbVersion = 1;
   static final _tableName = 'dataTable';
   static final _columnID = '_id';
-  static final columnName = 'name'; // had initial name == 'name
+  static final title = 'title';
+  static final description = 'description';
+  static final imageURL = 'urlToImage';
+  static final state = 'state';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -30,7 +33,10 @@ class DatabaseHelper {
   Future _onCreate(Database db, int version) async {
     db.execute('''
     CREATE TABLE $_tableName ($_columnID INTEGER PRIMARY KEY,
-    $columnName TEXT NOT NULL)
+    $title TEXT NOT NULL,
+    $description TEXT NOT NULL,
+    $imageURL TEXT NOT NULL,
+    $state INTEGER NOT NULL DEFAULT 0)
     ''');
   }
 
@@ -42,13 +48,6 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database db = await instance.database;
     return await db.query(_tableName);
-  }
-
-  Future update(Map<String, dynamic> row) async {
-    Database db = await instance.database;
-    int id = row[_columnID];
-    return await db
-        .update(_tableName, row, where: '$_columnID = ?', whereArgs: [id]);
   }
 
   Future delete(int id) async {
