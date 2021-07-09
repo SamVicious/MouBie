@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_list/control/dataBaseHelper.dart';
-import 'detailPage.dart';
+import 'DetailPage.dart';
 
 class LocalData extends StatefulWidget {
   const LocalData({Key? key}) : super(key: key);
@@ -10,16 +10,20 @@ class LocalData extends StatefulWidget {
 }
 
 class _LocalDataState extends State<LocalData> {
+  Future<List> getLocalData() async {
+    return await DatabaseHelper.instance.queryAll();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Card(
         child: FutureBuilder(
-          future: DatabaseHelper.instance.queryAll(),
-          builder: (context, snapshot) {
+          future: getLocalData(),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.data != null) {
               return ListView.builder(
-                  itemCount: (snapshot.data! as List).length,
+                  itemCount: (snapshot.data!).length,
                   itemBuilder: (context, index) {
                     return InkWell(
                         child: Container(
@@ -40,7 +44,7 @@ class _LocalDataState extends State<LocalData> {
                           child: Column(
                             children: [
                               Text(
-                                (snapshot.data! as List)[index]['title'],
+                                (snapshot.data!)[index]['title'],
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20.0),
@@ -49,16 +53,18 @@ class _LocalDataState extends State<LocalData> {
                                 height: 10.0,
                               ),
                               ClipRRect(
-                                child: Image.network((snapshot.data!
-                                        as List)[index]['urlToImage'] ??
-                                    'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
+                                child: FadeInImage.assetNetwork(
+                                    placeholder: 'assets/images/loading.gif',
+                                    image: (snapshot.data!)[index]
+                                            ['urlToImage'] ??
+                                        'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
                               SizedBox(
                                 height: 10.0,
                               ),
                               Text(
-                                (snapshot.data! as List)[index]['description'],
+                                (snapshot.data!)[index]['description'],
                                 style: TextStyle(color: Colors.black54),
                               )
                             ],
@@ -69,9 +75,11 @@ class _LocalDataState extends State<LocalData> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ContentPage((snapshot.data! as List)[index]),
+                                  ContentPage((snapshot.data!)[index]),
                             ),
-                          );
+                          ).then((value) {
+                            setState(() {});
+                          });
                         });
                   });
             } else {
