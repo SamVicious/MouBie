@@ -17,37 +17,35 @@ class _ContentPageState extends State<ContentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.individualContent['title']),
+        title: Text(widget.individualContent['original_title']),
       ),
       body: Container(
-        child: Column(
-          children: [
-            Image(
-              image: NetworkImage(widget.individualContent['urlToImage'] ??
-                  'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg'),
-              fit: BoxFit.fill,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              widget.individualContent['description'],
-              style: TextStyle(
-                fontSize: 20.0,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.network('https://image.tmdb.org/t/p/w300' +
+                  widget.individualContent['poster_path']),
+              SizedBox(
+                height: 20.0,
               ),
-            ),
-          ],
+              Text(
+                widget.individualContent['overview'],
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           if (widget.individualContent['_id'] == null) {
             await DatabaseHelper.instance.insert({
-              DatabaseHelper.title: widget.individualContent['title'],
-              DatabaseHelper.description:
-                  widget.individualContent['description'],
-              DatabaseHelper.imageURL: widget.individualContent['urlToImage'] ??
-                  'https://www.wpkube.com/wp-content/uploads/2018/10/404-page-guide-wpk.jpg',
+              DatabaseHelper.title: widget.individualContent['original_title'],
+              DatabaseHelper.description: widget.individualContent['overview'],
+              DatabaseHelper.imageURL: 'https://image.tmdb.org/t/p/w300' +
+                  widget.individualContent['poster_path'],
               DatabaseHelper.state: 1,
             });
             Fluttertoast.showToast(
