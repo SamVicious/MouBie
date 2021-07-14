@@ -1,6 +1,6 @@
-# news_list
+# MouBie
 
-News app using Flutter
+Movie Database app using Flutter
 
 ## Getting Started
 
