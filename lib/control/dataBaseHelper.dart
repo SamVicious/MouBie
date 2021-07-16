@@ -8,10 +8,8 @@ class DatabaseHelper {
   static final _dbVersion = 1;
   static final _tableName = 'dataTable';
   static final _columnID = '_id';
-  static final title = 'title';
-  static final description = 'description';
-  static final imageURL = 'urlToImage';
-  static final state = 'state';
+  static final title = 'original_title';
+  static final imageURL = 'poster_path';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -34,9 +32,7 @@ class DatabaseHelper {
     db.execute('''
     CREATE TABLE $_tableName ($_columnID INTEGER PRIMARY KEY,
     $title TEXT NOT NULL,
-    $description TEXT NOT NULL,
-    $imageURL TEXT NOT NULL,
-    $state INTEGER NOT NULL DEFAULT 0)
+    $imageURL TEXT NOT NULL)
     ''');
   }
 

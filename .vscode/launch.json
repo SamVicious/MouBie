@@ -10,7 +10,7 @@
             "type": "dart"
         },
         {
-            "name": "news_list (profile mode)",
+            "name": "news_list",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"

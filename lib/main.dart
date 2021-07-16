@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news_list/controller/movie_controller.dart';
 import 'screens/localScreen.dart';
 import 'control/apiFetch.dart';
 import 'screens/detailPage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 
 void main() {
-  runApp(NewsApp());
+  runApp(Moubie());
 }
 
-class NewsApp extends StatelessWidget {
+class Moubie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter News App',
       theme: ThemeData.dark(),
       home: MyHomePage(),
@@ -21,12 +23,12 @@ class NewsApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final MovieController movieController = Get.put(MovieController());
   ScrollController controller = ScrollController();
   int i = 1;
   Future addToListFinal() async {
@@ -38,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     controller.addListener(listenScrolling);
+    print(movieController.movieList.length);
   }
 
   @override
@@ -87,51 +90,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: TabBarView(
           children: [
-            Container(
-              child: Card(
-                child: FutureBuilder(
-                  future: addToListFinal(),
-                  builder: (context, snapshot) {
-                    if (snapshot.data != null) {
-                      return StaggeredGridView.countBuilder(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10,
-                        controller: controller,
-                        itemCount: (snapshot.data! as List).length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ContentPage(
-                                          (snapshot.data! as List)[index])));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20.0),
-                                child: Image.network(
-                                    'https://image.tmdb.org/t/p/w185' +
-                                        (snapshot.data! as List)[index]
-                                            ['poster_path']),
-                              ),
-                            ),
-                          );
-                        },
-                        staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                      );
-                    } else {
-                      return Container(
-                        child: Center(
-                          child: Text('Loading...'),
-                        ),
-                      );
-                    }
+            Obx(() => StaggeredGridView.countBuilder(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 5,
+                  controller: controller,
+                  itemCount: movieController.movieList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Get.to(ContentPage(index));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 2, right: 2),
+                        child: Image.network('https://image.tmdb.org/t/p/w185' +
+                            movieController.movieList[index].posterPath),
+                      ),
+                    );
                   },
-                ),
-              ),
-            ),
+                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                )),
             LocalData(),
           ],
         ),
