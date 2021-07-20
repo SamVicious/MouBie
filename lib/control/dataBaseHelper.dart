@@ -10,6 +10,7 @@ class DatabaseHelper {
   static final _columnID = '_id';
   static final title = 'original_title';
   static final imageURL = 'poster_path';
+  static final overview = 'overview';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -32,7 +33,8 @@ class DatabaseHelper {
     db.execute('''
     CREATE TABLE $_tableName ($_columnID INTEGER PRIMARY KEY,
     $title TEXT NOT NULL,
-    $imageURL TEXT NOT NULL)
+    $imageURL TEXT NOT NULL,
+    $overview TEXT NOT NULL)
     ''');
   }
 

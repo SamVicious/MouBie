@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_list/controller/movie_controller.dart';
 import 'screens/localScreen.dart';
-import 'control/apiFetch.dart';
 import 'screens/detailPage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -31,16 +30,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final MovieController movieController = Get.put(MovieController());
   ScrollController controller = ScrollController();
   int i = 1;
-  Future addToListFinal() async {
-    List<dynamic> newsContent = await Content().getRawData(pageNum: i);
-    return newsContent;
-  }
 
   @override
   void initState() {
     super.initState();
     controller.addListener(listenScrolling);
-    print(movieController.movieList.length);
   }
 
   @override
@@ -55,14 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
       if (isTop) {
         if (i > 1) {
           i--;
-          addToListFinal().then((value) =>
-              controller.jumpTo(controller.position.maxScrollExtent - 0.1));
-          setState(() {});
+          movieController.fetchMovie(page: i);
         }
       } else {
-        addToListFinal().then((value) => controller.jumpTo(0.1));
         setState(() {
           i++;
+          movieController.fetchMovie(page: i);
         });
       }
     }
@@ -98,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        Get.to(ContentPage(index));
+                        Get.to(() => ContentPage(index));
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 2, right: 2),

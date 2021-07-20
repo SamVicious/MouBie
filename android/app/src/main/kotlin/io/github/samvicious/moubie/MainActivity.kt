@@ -1,4 +1,4 @@
-package io.github.samvicious.news_list
+package io.github.samvicious.moubie
 
 import io.flutter.embedding.android.FlutterActivity
 

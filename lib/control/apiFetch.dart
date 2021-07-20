@@ -7,6 +7,7 @@ class Content {
       'https://api.themoviedb.org/3/movie/popular?api_key=68d1bdeed3c4339850eeeb515e73f059&language=en-US';
   static var client = http.Client();
   Future<dynamic> getRawData({int pageNum = 1}) async {
+    print(endUrl + '&page=$pageNum');
     http.Response response =
         await client.get(Uri.parse(endUrl + '&page=$pageNum'));
     if (response.statusCode == 200) {
